@@ -16,7 +16,7 @@ extension Conversation {
 
 extension Conversation {
     public func run(in context: inout BotContext) throws {
-        
+        try context.bot.enqueue(sequence: children)
     }
 }
 

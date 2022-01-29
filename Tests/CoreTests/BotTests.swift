@@ -12,6 +12,13 @@ final class FabulaKitTests: XCTestCase {
         var userInput: [String : Any] = [:]
         
         var outputQueue: [String] = []
+        
+        func enqueue(sequence: [AnyFabula]) throws {
+            var context = BotContext(bot: self, input: "")
+            for x in sequence {
+                try x.run(in: &context)
+            }
+        }
 
         func reply(_ text: String) {
             isWaitingInput = false
@@ -25,6 +32,20 @@ final class FabulaKitTests: XCTestCase {
             isWaitingInput = true
             outputQueue.append(text)
         }
+    }
+    
+    func test_conversation() throws {
+        
+        let bot = TestBot()
+        
+        let conv = Conversation(key: "conv") {
+            Say("say_1")
+            Say("say_2")
+            Ask("ask_1", key: "ask_1")
+        }
+        
+        try bot.run(conversation: conv)
+        XCTAssertEqual(bot.outputQueue.count, 3)
     }
     
     func test_botCanSayAndAsk() throws {

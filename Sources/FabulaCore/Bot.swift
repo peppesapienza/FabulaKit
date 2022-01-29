@@ -5,6 +5,8 @@ public protocol FabulaBot: AnyObject {
     
     var isWaitingInput: Bool { get }
     
+    func enqueue(sequence: [AnyFabula]) throws
+    
     func reply(_ text: String)
     
     func say(_ text: String)
