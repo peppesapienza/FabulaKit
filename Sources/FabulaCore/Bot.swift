@@ -9,9 +9,9 @@ public protocol FabulaBot: AnyObject {
     
     func reply(_ text: String)
     
-    func say(_ text: String)
+    func say(_ event: Say.Event)
     
-    func ask(_ text: String)
+    func ask(_ event: Ask.Event)
 }
 
 extension FabulaBot {
