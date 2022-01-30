@@ -1,6 +1,7 @@
 public struct TupleFabula<T>: Fabula, Container {
     
     public typealias Body = Never
+    public typealias Event = Never
     
     public let value: T
     public let children: [AnyFabula]

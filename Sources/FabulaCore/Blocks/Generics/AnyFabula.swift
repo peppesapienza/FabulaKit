@@ -2,6 +2,7 @@
 public struct AnyFabula: Fabula {
     
     public typealias Body = Never
+    public typealias Event = Never
     
     public init<F: Fabula>(_ fabula: F) {
         self.fabulaType = F.self

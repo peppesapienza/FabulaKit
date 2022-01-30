@@ -1,5 +1,6 @@
 public struct Conversation: Fabula, Container {
     public typealias Body = Never
+    public typealias Event = Never
     
     public let key: String
     public let children: [AnyFabula]
