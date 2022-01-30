@@ -1,6 +1,12 @@
+import Foundation
+
 public struct Ask: Fabula {
-    
     public typealias Body = Never
+    
+    init(_ text: String, key: String) {
+        self.text = text
+        self.key = key
+    }
     
     let text: String
     
@@ -8,22 +14,27 @@ public struct Ask: Fabula {
     let key: String
 }
 
-public extension Ask {
-    init(_ text: String, key: String) {
-        self.text = text
-        self.key = key
-    }
-}
-
 extension Ask {
     public func run(in context: inout BotContext) throws {
         context.bot.userInput[key] = ""
-        context.bot.ask(context.fill(text))
+        context.bot.ask(.init(
+            text: context.fill(text),
+            key: key
+        ))
     }
 }
 
 extension Ask: Composable {
     public func accept(_ composer: Composer, parent: Node) {
         composer.compose(self, parent: parent)
+    }
+}
+
+extension Ask {
+    public struct Event: FabulaEvent {
+        public let id: UUID = .init()
+        
+        public let text: String
+        public let key: String
     }
 }
