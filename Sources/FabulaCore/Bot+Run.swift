@@ -1,6 +1,7 @@
 extension FabulaBot {
     
-    internal func run(conversation: Conversation) throws {
+    /// Enqueue and starts a `Conversation` script.
+    public func run(_ conversation: Conversation) throws {
         let node = Node(conversation, parent: nil)
         TreeComposer().compose(conversation, parent: node)
         
