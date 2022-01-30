@@ -5,13 +5,19 @@ extension BotError {
     static let failed: BotError = .init(key: "test_failed", message: "FAIL")
 }
 
+extension FabulaEvent {
+    func to<E>(_ type: E.Type) throws -> E where E: FabulaEvent {
+        try XCTUnwrap(self as? E)
+    }
+}
+
 final class FabulaKitTests: XCTestCase {
     
     class TestBot: FabulaBot {
         var userInfo: [AnyHashable : Any] = [:]
         var userInput: [String : Any] = [:]
         
-        var outputQueue: [String] = []
+        var outputQueue: [FabulaEvent] = []
         
         func enqueue(sequence: [AnyFabula]) throws {
             var context = BotContext(bot: self, input: "")
@@ -24,13 +30,13 @@ final class FabulaKitTests: XCTestCase {
             isWaitingInput = false
         }
         
-        func say(_ text: String) {
-            outputQueue.append(text)
+        func say(_ event: Say.Event) {
+            outputQueue.append(event)
         }
         
-        func ask(_ text: String) {
+        func ask(_ event: Ask.Event) {
             isWaitingInput = true
-            outputQueue.append(text)
+            outputQueue.append(event)
         }
     }
     
@@ -44,7 +50,7 @@ final class FabulaKitTests: XCTestCase {
             Ask("ask_1", key: "ask_1")
         }
         
-        try bot.run(conversation: conv)
+        try bot.run(conv)
         XCTAssertEqual(bot.outputQueue.count, 3)
     }
     
@@ -58,10 +64,15 @@ final class FabulaKitTests: XCTestCase {
         try bot.run(say1)
         try bot.run(ask1)
         
-        XCTAssertEqual(bot.outputQueue, [
-            say1.text,
-            ask1.text
-        ])
+        XCTAssertEqual(
+            try bot.outputQueue[0].to(Say.Event.self).text,
+            say1.text
+        )
+        
+        XCTAssertEqual(
+            try bot.outputQueue[1].to(Ask.Event.self).key,
+            ask1.key
+        )
         
         let _ = try XCTUnwrap(bot.userInput[ask1.key] as? String)
         XCTAssertTrue(bot.isWaitingInput)
