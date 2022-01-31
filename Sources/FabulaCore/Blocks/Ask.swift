@@ -33,6 +33,7 @@ extension Ask: Composable {
 extension Ask {
     public struct Event: FabulaEvent {
         public let id: UUID = .init()
+        public let type: String = EventType.ask
         
         public let text: String
         public let key: String

@@ -28,6 +28,8 @@ extension Say: Composable {
 extension Say {
     public struct Event: FabulaEvent {
         public let id: UUID = .init()
+        public let type: String = EventType.say
+        
         public let text: String
     }
 }

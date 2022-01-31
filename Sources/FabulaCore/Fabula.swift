@@ -30,6 +30,7 @@ extension Never: Fabula, FabulaEvent {
 
     public var body: Never { fatalError("no body in Never") }
     public var id: UUID { UUID() }
+    public var type: String { EventType.never }
 }
 
 extension Fabula where Body == Never {
