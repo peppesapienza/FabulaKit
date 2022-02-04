@@ -1,4 +1,4 @@
-public struct Conversation: Fabula, Container {
+public struct Conversation: Fabula, Container, Sequence {
     public typealias Body = Never
     public typealias Event = Never
     
@@ -16,8 +16,10 @@ extension Conversation {
 }
 
 extension Conversation {
-    public func run(in context: inout BotContext) throws {
-        try context.bot.enqueue(sequence: children)
+    public func makeIterator() -> FabulaIterator {
+        let node = Node(self, parent: nil)
+        TreeComposer().compose(self, parent: node)
+        return FabulaIterator(node)
     }
 }
 
