@@ -3,7 +3,7 @@ import Foundation
 public struct Ask: Fabula {
     public typealias Body = Never
     
-    init(_ text: String, key: String) {
+    public init(_ text: String, key: String) {
         self.text = text
         self.key = key
     }
@@ -17,7 +17,7 @@ public struct Ask: Fabula {
 extension Ask {
     public func run(in context: inout BotContext) throws {
         context.bot.userInput[key] = ""
-        context.bot.ask(.init(
+        context.bot.ask(Ask.Event(
             text: context.fill(text),
             key: key
         ))
@@ -32,6 +32,12 @@ extension Ask: Composable {
 
 extension Ask {
     public struct Event: FabulaEvent {
+        public init(text: String, key: String) {
+            assert(!key.isEmpty, "requires a non-empty key")
+            self.key = key
+            self.text = text
+        }
+        
         public let id: UUID = .init()
         public let type: String = EventType.ask
         
