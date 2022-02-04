@@ -11,8 +11,7 @@ public final class Node {
     public var isRoot: Bool { parent == nil }
     public var isLeaf: Bool { children.isEmpty }
     
-    
-    let content: AnyFabula
+    public let content: AnyFabula
     
     public var contentType: Any.Type {
         content.fabulaType
@@ -22,4 +21,8 @@ public final class Node {
         children.append(child)
     }
     
+    /// Returns an iterator over the children of the current node
+    public func makeIterator() -> FabulaIterator {
+        FabulaIterator(self)
+    }
 }
