@@ -9,15 +9,24 @@ let package = Package(
     products: [
         .library(
             name: "FabulaKit",
-            targets: ["FabulaCore"]),
+            targets: ["FabulaCore", "FabulaChat"]),
     ],
     dependencies: [],
     targets: [
         .target(
             name: "FabulaCore",
             dependencies: []),
+        .target(
+            name: "FabulaChat",
+            dependencies: ["FabulaCore"]
+        ),
         .testTarget(
             name: "CoreTests",
-            dependencies: ["FabulaCore"]),
+            dependencies: ["FabulaCore"]
+        ),
+        .testTarget(
+            name: "ChatTests",
+            dependencies: ["FabulaChat"]
+        )
     ]
 )
