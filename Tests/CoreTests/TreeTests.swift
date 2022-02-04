@@ -12,8 +12,9 @@ final class TreeTests: XCTestCase {
     
     func test_coversationIsComposedAsExpected() throws {
         
-        /// Needs to find out a better way to test the tree without casting the node
-        /// Probably a conformancy to `CustomDebugStringConvertible` should solve the problem
+        // TODO: find out a better way to test the tree without casting the node
+        /// - conformancy to `CustomDebugStringConvertible`?
+        /// - A internal protocol that exposes a text?
 
         let conversation = Conversation(key: "conversation_1") {
             Say("Welcome!")

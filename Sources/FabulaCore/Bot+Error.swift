@@ -25,9 +25,3 @@ extension BotError: Equatable {
         lhs.key == rhs.key
     }
 }
-
-public extension BotError {
-    static let waitingUserInput: BotError = .init(key: "fabula_error_waiting_user_input", message: "FabulaBot is waiting for an user input.")
-}
-
-

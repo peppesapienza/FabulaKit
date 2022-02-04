@@ -18,16 +18,24 @@ final class FabulaKitTests: XCTestCase {
         var userInput: [String : Any] = [:]
         
         var outputQueue: [FabulaEvent] = []
+        var isWaitingInput: Bool = false
         
-        func enqueue(sequence: [AnyFabula]) throws {
+        var currentAsk: Ask.Event?
+        
+        func enqueue(_ iterator: FabulaIterator) throws {
+            var iterator = iterator
             var context = BotContext(bot: self, input: "")
-            for x in sequence {
-                try x.run(in: &context)
+            while let next = iterator.next() {
+                try next.content.run(in: &context)
             }
         }
-
+        
         func reply(_ text: String) {
             isWaitingInput = false
+            
+            if let currentAsk = currentAsk {
+                userInput[currentAsk.key] = text
+            }
         }
         
         func say(_ event: Say.Event) {
@@ -36,7 +44,12 @@ final class FabulaKitTests: XCTestCase {
         
         func ask(_ event: Ask.Event) {
             isWaitingInput = true
+            currentAsk = event
             outputQueue.append(event)
+        }
+        
+        func resume() {
+            
         }
     }
     
@@ -50,7 +63,7 @@ final class FabulaKitTests: XCTestCase {
             Ask("ask_1", key: "ask_1")
         }
         
-        try bot.run(conv)
+        try bot.start(conv)
         XCTAssertEqual(bot.outputQueue.count, 3)
     }
     
@@ -60,7 +73,7 @@ final class FabulaKitTests: XCTestCase {
         let say1 = Say("Hello, welcome to the test example!")
         let ask1 = Ask("Would you like to proceed?", key: "first_ask")
         let say2 = Say("You said: ${first_ask}")
-        
+                
         try bot.run(say1)
         try bot.run(ask1)
         
@@ -76,12 +89,14 @@ final class FabulaKitTests: XCTestCase {
         
         let _ = try XCTUnwrap(bot.userInput[ask1.key] as? String)
         XCTAssertTrue(bot.isWaitingInput)
+
+        bot.reply("yes")        
+        try bot.run(say2)
         
-        XCTAssertThrowsError(try bot.run(say2)) { error in
-            XCTAssertEqual((error as? BotError) ?? .failed, BotError.waitingUserInput)
-        }
-        
-        bot.reply("")
+        XCTAssertEqual(
+            try bot.outputQueue[2].to(Say.Event.self).text,
+            "You said: yes"
+        )
         
     }
     
