@@ -1,5 +1,6 @@
 import XCTest
 @testable import FabulaChat
+import SwiftUI
 import FabulaCore
 import Combine
 
@@ -7,7 +8,7 @@ final class ChatTests: XCTestCase {
     
     var cancellables: [AnyCancellable] = []
     
-    func test_workerEmits() throws {
+    func test_chatResumes_whenInputIsSubmitted() throws {
         let expStateToSuspend = expectation(description: "The bot should stop running after running an Ask.Event")
         let expChatToResume = expectation(description: "The bot should resume when the input has been provided")
         
@@ -24,6 +25,8 @@ final class ChatTests: XCTestCase {
         })
         
         let chat = ChatBot()
+        
+        chat.isOpen = true
         try chat.start(conversation)
         
         //TODO: It's clear I need to find a better way to store event
@@ -63,6 +66,26 @@ final class ChatTests: XCTestCase {
         }.store(in: &cancellables)
         
         wait(for: [expStateToSuspend, expChatToResume], timeout: 20)
+    }
+    
+    func testColorFromHex() throws {
+        
+        let grayLight = "#d3dce6"
+        let grayDark = "#273444"
+        
+        let blueHex = "#1fb6ff"
+        
+        let blueColor = Color(hex: blueHex)
+        XCTAssertEqual(blueColor.hex(), blueHex.uppercased())
+        
+        let grayLightColor = Color(hex: grayLight)
+        let grayDarkColor = Color(hex: grayDark)
+        XCTAssertEqual(grayLightColor.hex(), grayLight.uppercased())
+        XCTAssertEqual(grayDarkColor.hex(), grayDark.uppercased())
+        
+        let dynamicGrayColor = Color(light: grayLight, dark: grayDark)
+        XCTAssertEqual(dynamicGrayColor.hex(), grayLight.uppercased())
+        
     }
 
 
