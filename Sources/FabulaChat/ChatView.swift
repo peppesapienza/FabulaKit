@@ -3,6 +3,8 @@ import FabulaCore
 
 public struct ChatView: View {
     
+    @Environment(\.theme) private var theme
+    
     public init(bot: ChatBot) {
         self.bot = bot
     }
@@ -11,30 +13,58 @@ public struct ChatView: View {
     private var bot: ChatBot
     
     public var body: some View {
-        ScrollView {
-            if !bot.events.isEmpty {
-                LazyVStack(alignment: .trailing) {
-                    ForEach(bot.events, id: \.id) { event in
-                        bot.map(event)
-                            .flip()
+        ZStack {
+            introView()
+            if bot.isOpen {
+                chatView()
+            }
+        }.tint(theme.colors.tint)
+    }
+    
+    @ViewBuilder
+    private func introView() -> some View {
+        VStack(alignment: .leading) {
+            Spacer()
+            
+            HStack {
+                ChatBubble()
+                    .onTapGesture {
+                        bot.isOpen.toggle()
                     }
-                }
+                Spacer()
             }
         }
-        .padding()
-        .flip()
-        .background(.clear)
-        .onAppear {
-            
-        }
+        .padding([.top, .leading, .trailing])
     }
-}
-
-extension View {
-    public func flip() -> some View {
-        return self
-            .rotationEffect(.radians(.pi))
-            .scaleEffect(x: -1, y: 1, anchor: .center)
+    
+    @ViewBuilder
+    private func chatView() -> some View {
+        VStack {
+            HStack {
+                Text("FabulaKitDemo")
+                    .font(.title2)
+                    .fontWeight(.black)
+                Spacer()
+                Button(action: {
+                    bot.isOpen.toggle()
+                }, label: {
+                    Image(systemName: "xmark")
+                        .padding([.top, .bottom], 6)
+                })
+                .buttonStyle(.bordered)
+            }
+            .padding()
+            .background(theme.colors.box)
+            
+            ScrollView {
+                LazyVStack(alignment: .leading) {
+                    ForEach(bot.events, id: \.id) { event in
+                        bot.map(event)
+                    }
+                }
+            }.padding()
+        }
+        .background(theme.colors.background)
     }
 }
 
@@ -54,19 +84,17 @@ struct ChatView_Previews: PreviewProvider {
                 HStack {
                     Spacer()
                     Button("start") {
+                        bot.isOpen.toggle()
                         try? bot.start(conv)
-                    }.buttonStyle(.bordered)
-                    
-                    Button("reset") {
                     }.buttonStyle(.bordered)
                 }
                 Spacer()
             }
             .padding()
-            .background(Color.orange)
             
             ChatView(bot: bot)
                 .background(.clear)
         }
+.previewInterfaceOrientation(.portrait)
     }
 }

@@ -26,6 +26,9 @@ open class ChatBot: FabulaBot, ObservableObject {
     @Published
     private(set) var state: State = .idle
     
+    @Published
+    var isOpen: Bool = false
+    
     /// The scheduled events queue.
     ///
     /// It's a FIFO queue where the first event appended is the first to be resumed
@@ -33,11 +36,11 @@ open class ChatBot: FabulaBot, ObservableObject {
         
     private var iterator: FabulaIterator?
     
-    // TODO: This logic should probably be moved into the Vore
+    // TODO: This logic should probably be moved into the Core
     public func enqueue(_ iterator: FabulaIterator) throws {
         self.iterator = iterator
         
-        guard case .idle = state else {
+        guard case .idle = state, isOpen else {
             return
         }
         
@@ -114,11 +117,11 @@ open class ChatBot: FabulaBot, ObservableObject {
             print("dispatch:", event)
             
             // TODO: Add a event.beforeDispatch
-            if let first = events.first, first is TypingEvent {
-                events.removeFirst()
+            if let first = events.last, first is TypingEvent {
+                events.removeLast()
             }
             
-            events.insert(event, at: 0)
+            events.append(event)
             nextPub.send(event)
             
             // TODO: Add a event.afterDispatch
