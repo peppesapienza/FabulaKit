@@ -71,10 +71,16 @@ public struct ChatView: View {
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         let conv = Conversation(key: "some") {
-            Say("Hello, world!")
-            Say("This is a test example")
-            Ask("What's your name?", key: "username")
-            Say("your name is: ${username}")
+            Say(
+            """
+            Hey there 👋!
+            
+            This is is a scripted Conversation
+            """)
+            Say("It runs automatically and it stops when the user needs to provide an input")
+            Say("Like this...")
+            Ask("Where do you live?", key: "city")
+            Say("Wow!! I love ${city} 🌏")
         }
         
         let bot = ChatBot()

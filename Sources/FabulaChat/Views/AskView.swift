@@ -40,7 +40,7 @@ struct AskView: View {
             .onAppear {
                 #if DEBUG
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    input = "AutoInput"
+                    input = "Melbourne"
                     delegate?.askView(didSubmit: input, from: event)
                     didSend.toggle()
                 }
