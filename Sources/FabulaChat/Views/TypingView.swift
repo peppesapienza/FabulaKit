@@ -1,12 +1,14 @@
 import SwiftUI
 
 struct DotView: View {
+    
+    @Environment(\.theme) private var theme
 
     let size: CGFloat = 10
 
     var body: some View {
         Circle()
-            .foregroundColor(.white)
+            .foregroundColor(theme.colors.tint)
             .frame(width: size, height: size)
     }
     

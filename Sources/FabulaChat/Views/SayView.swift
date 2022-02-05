@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SayView: ChatBlockView {
+struct SayView: View {
     
     init(_ text: String) {
         self.text = text

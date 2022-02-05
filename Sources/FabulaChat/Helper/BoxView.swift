@@ -2,7 +2,9 @@ import SwiftUI
 
 /// A wrapper view with a `Capsule` shape and some default paddings
 public struct BoxView<Content>: View where Content: View {
-        
+    
+    @Environment(\.theme) var theme
+    
     public init(
         alignment: HorizontalAlignment = .center,
         @ViewBuilder content: @escaping () -> Content
@@ -17,11 +19,11 @@ public struct BoxView<Content>: View where Content: View {
     public var body: some View {
         VStack(alignment: alignment) {
             content()
-                .padding([.top, .bottom], 10)
-                .padding([.leading, .trailing], 16)
         }
-        .background(Color.gray)
-        .clipShape(Capsule())
+        .padding([.top, .bottom], 16)
+        .padding([.leading, .trailing], 20)
+        .background(theme.colors.box)
+        .cornerRadius(8)
     }
 }
 
@@ -29,6 +31,8 @@ struct BoxView_Previews: PreviewProvider {
     static var previews: some View {
         BoxView {
             Text("some text")
+            Text("so")
         }
+        .previewLayout(.fixed(width: 300, height: 300))
     }
 }
