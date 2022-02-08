@@ -75,7 +75,7 @@ struct ChatView_Previews: PreviewProvider {
             """
             Hey there 👋!
             
-            This is is a scripted Conversation
+            This is a scripted Conversation
             """)
             Say("It runs automatically and it stops when the user needs to provide an input")
             Say("Like this...")
@@ -90,7 +90,6 @@ struct ChatView_Previews: PreviewProvider {
                 HStack {
                     Spacer()
                     Button("start") {
-                        bot.isOpen.toggle()
                         try? bot.start(conv)
                     }.buttonStyle(.bordered)
                 }
@@ -99,8 +98,7 @@ struct ChatView_Previews: PreviewProvider {
             .padding()
             
             ChatView(bot: bot)
-                .background(.clear)
         }
-.previewInterfaceOrientation(.portrait)
+        .previewInterfaceOrientation(.portrait)
     }
 }
