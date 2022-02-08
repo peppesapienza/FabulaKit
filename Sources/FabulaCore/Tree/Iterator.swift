@@ -1,7 +1,11 @@
-public struct FabulaIterator: IteratorProtocol {
+public class FabulaIterator: IteratorProtocol {
 
     init(_ root: Node) {
         self.stack = [.init(index: 0, node: root)]
+    }
+    
+    deinit {
+        stack.removeAll()
     }
     
     /// Frontier of all the nodes in the tree that are candidates for returning next
@@ -11,7 +15,7 @@ public struct FabulaIterator: IteratorProtocol {
         !stack.isEmpty
     }
         
-    public mutating func next() -> Node? {
+    public func next() -> Node? {
         guard hasNext else { return nil }
         
         while let step = stack.last, step.isEmpty || step.index >= step.count {
@@ -33,7 +37,7 @@ public struct FabulaIterator: IteratorProtocol {
 
     /// Removes the current node from the stack and returns it
     @discardableResult
-    mutating func skip() -> Node? {
+    func skip() -> Node? {
         stack.popLast()?.node
     }
     
