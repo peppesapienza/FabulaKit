@@ -1,5 +1,5 @@
 public struct BotContext {
-    public init(bot: FabulaBot, input: String) {
+    public init(bot: AnyFabulaBot, input: String) {
         self.bot = bot
         self.input = input
     }
@@ -7,7 +7,7 @@ public struct BotContext {
     /// The user input
     public var input: String
     
-    public var bot: FabulaBot
+    public var bot: AnyFabulaBot
     
     /// Injects the `bot.userInput` inside all matching tags `${some}`
     public func fill(_ text: String) -> String {

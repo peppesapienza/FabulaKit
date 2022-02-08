@@ -1,6 +1,6 @@
 import Foundation
 
-/// An event emitted by a `FabulaBot`
+/// An event emitted by `AnyFabulaBot`
 public protocol FabulaEvent {
     var id: UUID { get }
     var type: String { get }

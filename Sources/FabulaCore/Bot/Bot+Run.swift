@@ -1,10 +1,4 @@
-extension FabulaBot {
-    
-    /// Enqueue and starts a `Conversation` script.
-    public func start(_ conversation: Conversation) throws {
-        try enqueue(conversation.makeIterator())
-    }
-    
+extension AnyFabulaBot {
     internal func run<T>(_ fabula: T) throws where T: Fabula {
         try run(fabula, with: BotContext(bot: self, input: ""))
     }

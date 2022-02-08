@@ -16,6 +16,10 @@ extension Conversation {
 }
 
 extension Conversation {
+    public func run(in context: inout BotContext) throws {
+        context.bot.resume()
+    }
+    
     public func makeIterator() -> FabulaIterator {
         let node = Node(self, parent: nil)
         TreeComposer().compose(self, parent: node)
