@@ -1,23 +1,25 @@
 public class Node {
     
-    init<F>(_ content: F, parent: Node? = nil) where F: Fabula {
-        self.content = AnyFabula(content)
+    internal init<F>(_ content: F, parent: Node? = nil) where F: Fabula {
+        self.content = content as? AnyFabula ?? AnyFabula(content)
         self.parent = parent
+        self.attributes = parent?.attributes ?? []
     }
-    
-    public let parent: Node?
-    private(set) public var children: [Node] = []
     
     public var isRoot: Bool { parent == nil }
     public var isLeaf: Bool { children.isEmpty }
     
-    let content: AnyFabula
+    internal private(set) weak var parent: Node?
+    internal private(set) var children: [Node] = []
+     
+    internal let content: AnyFabula
+    internal var attributes: [AnyAttribute] = []
     
-    public var contentType: Any.Type {
+    internal var contentType: Any.Type {
         content.fabulaType
     }
     
-    func add(child: Node) {
+    internal func add(child: Node) {
         children.append(child)
     }
 }

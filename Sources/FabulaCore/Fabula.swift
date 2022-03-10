@@ -18,10 +18,32 @@ extension Fabula {
     }
 }
 
+extension Fabula {
+    internal func attribute(name: String, value: AnyValue, replacing: Bool = true) -> ModifiedFabula {
+        attribute(Attribute<Any>(
+            name: name,
+            value: value,
+            shouldReplaceExisting: replacing
+        ))
+   }
+
+    internal func attribute<C>(_ attribute: Attribute<C>) -> ModifiedFabula {
+        if var container = self as? Container {
+            container.children = container.children.map { AnyFabula($0.attribute(attribute)) }
+        }
+        
+        if var modified = self as? ModifiedFabula {
+            modified.attributes.append(attribute)
+            return modified
+        }
+        
+        return ModifiedFabula(self, attributes: [attribute])
+    }
+}
 
 
-public protocol Container {
-    var children: [AnyFabula] { get }
+internal protocol Container {
+    var children: [AnyFabula] { get set }
 }
 
 /// An helper extension to avoid accessing body of first level components

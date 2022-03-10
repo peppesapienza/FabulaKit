@@ -3,7 +3,7 @@ public struct Conversation: Fabula, Container, Sequence {
     public typealias Event = Never
     
     public let key: String
-    public let children: [AnyFabula]
+    public var children: [AnyFabula]
 }
 
 extension Conversation {
@@ -21,14 +21,12 @@ extension Conversation {
     }
     
     public func makeIterator() -> FabulaIterator {
-        let node = Node(self, parent: nil)
-        TreeComposer().compose(self, parent: node)
-        return FabulaIterator(node)
+        FabulaIterator(TreeComposer().compose(self, parent: nil)!)
     }
 }
 
 extension Conversation: Composable {
-    public func accept(_ composer: Composer, parent: Node) {
+    public func accept(_ composer: Composer, parent: Node?) -> Node? {
         composer.compose(self, parent: parent)
     }
 }
