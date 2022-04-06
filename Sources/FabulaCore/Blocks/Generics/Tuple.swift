@@ -1,14 +1,13 @@
-public struct TupleFabula<T>: Fabula, Container {
-    
+public struct TupleFabula<T>: Fabula, Container {    
     public typealias Body = Never
     public typealias Event = Never
     
     public let value: T
-    public let children: [AnyFabula]
+    public var children: [AnyFabula]
 }
 
 extension TupleFabula: Composable {
-    public func accept(_ composer: Composer, parent: Node) {
+    public func accept(_ composer: Composer, parent: Node?) -> Node? {
         composer.compose(self, parent: parent)
     }
 }

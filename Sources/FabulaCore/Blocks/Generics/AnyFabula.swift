@@ -24,7 +24,7 @@ extension AnyFabula {
 }
 
 extension AnyFabula: Composable {
-    public func accept(_ composer: Composer, parent: Node) {
+    public func accept(_ composer: Composer, parent: Node?) -> Node? {
         composer.compose(self, parent: parent)
     }
 }

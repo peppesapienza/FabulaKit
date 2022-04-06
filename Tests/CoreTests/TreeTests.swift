@@ -23,41 +23,54 @@ final class TreeTests: XCTestCase {
             Say("you said: ${first_ask}")
         }
         
-        let node: Node = .init(conversation, parent: nil)
-        TreeComposer().compose(conversation, parent: node)
+        let node = try XCTUnwrap(TreeComposer().compose(conversation, parent: nil))
                 
         XCTAssertTrue(node.isRoot)
         XCTAssertFalse(node.isLeaf)
         
         XCTAssertEqual(
-            try node.children[0].to(Conversation.self).key,
-            conversation.key
-        )
-        
-        let conversationChildren = node.children[0].children
-        XCTAssertEqual(conversationChildren.count, 4)
-        
-        XCTAssertEqual(
-            try conversationChildren[0].to(Say.self).text,
+            try node.children[0].to(Say.self).text,
             "Welcome!"
         )
         
         XCTAssertEqual(
-            try conversationChildren[1].to(Say.self).text,
+            try node.children[1].to(Say.self).text,
             "This is an test example!"
         )
         
         XCTAssertEqual(
-            try conversationChildren[2].to(Ask.self).text,
+            try node.children[2].to(Ask.self).text,
             "Would you like to know more?"
         )
         
         XCTAssertEqual(
-            try conversationChildren[3].to(Say.self).text,
+            try node.children[3].to(Say.self).text,
             "you said: ${first_ask}"
         )
         
     }
 
+    
+    func test_sleepModifier() throws {
+        
+        let fabula = Conversation(key: "hello") {
+            Say("sleep 2")
+                .sleep(2)
+            
+            Say("sleep 3")
+        }.sleep(3)
+        
+        let node = try XCTUnwrap(TreeComposer().compose(fabula, parent: nil))
+        
+        XCTAssertEqual(node.attributes[0].name, "sleep")
+        XCTAssertEqual(try XCTUnwrap(node.attributes[0].value.number), 3)
+        
+        let say2 = node.children[0]
+        XCTAssertEqual(say2.attributes.count, 2)
+        
+        let say3 = node.children[1]
+        XCTAssertEqual(say3.attributes.count, 1)
+    }
+    
     
 }
