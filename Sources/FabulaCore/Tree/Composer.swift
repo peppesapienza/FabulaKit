@@ -51,13 +51,17 @@ public class TreeComposer: Composer {
     }
     
     public func compose(_ modified: ModifiedFabula, parent: Node?) -> Node? {
-        print(modified.attributes)
-        let node = modified.content.accept(self, parent: parent)
-
-        node?.attributes += modified.attributes
+        let node = Node(modified.content, parent: parent)
+        node.attributes += modified.attributes
         
-        if let node = node {
-            parent?.add(child: node)
+        if let container = modified.content.value as? Container {
+            for child in container.children {
+                let childNode = child.accept(self, parent: node)
+                
+                if let childNode = childNode {
+                    node.add(child: childNode)
+                }
+            }
         }
     
         return node

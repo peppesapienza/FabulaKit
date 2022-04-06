@@ -65,9 +65,11 @@ final class TreeTests: XCTestCase {
         XCTAssertEqual(node.attributes[0].name, "sleep")
         XCTAssertEqual(try XCTUnwrap(node.attributes[0].value.number), 3)
         
-        let say = node.children[0]
-        XCTAssertEqual(say.attributes.count, 2)
-        //XCTAssertEqual(try conv.to(Conversation.self).key, "hello")
+        let say2 = node.children[0]
+        XCTAssertEqual(say2.attributes.count, 2)
+        
+        let say3 = node.children[1]
+        XCTAssertEqual(say3.attributes.count, 1)
     }
     
     

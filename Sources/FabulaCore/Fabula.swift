@@ -28,16 +28,7 @@ extension Fabula {
    }
 
     internal func attribute<C>(_ attribute: Attribute<C>) -> ModifiedFabula {
-        if var container = self as? Container {
-            container.children = container.children.map { AnyFabula($0.attribute(attribute)) }
-        }
-        
-        if var modified = self as? ModifiedFabula {
-            modified.attributes.append(attribute)
-            return modified
-        }
-        
-        return ModifiedFabula(self, attributes: [attribute])
+        ModifiedFabula(self, attributes: [attribute])
     }
 }
 
