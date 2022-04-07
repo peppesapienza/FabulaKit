@@ -52,7 +52,7 @@ public class TreeComposer: Composer {
     
     public func compose(_ modified: ModifiedFabula, parent: Node?) -> Node? {
         let node = Node(modified.content, parent: parent)
-        node.attributes += modified.attributes
+        node.add(attributes: modified.attributes)
         
         if let container = modified.content.value as? Container {
             for child in container.children {

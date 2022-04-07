@@ -56,6 +56,7 @@ final class TreeTests: XCTestCase {
         let fabula = Conversation(key: "hello") {
             Say("sleep 2")
                 .sleep(2)
+                .sleep(4)
             
             Say("sleep 3")
         }.sleep(3)
@@ -63,13 +64,13 @@ final class TreeTests: XCTestCase {
         let node = try XCTUnwrap(TreeComposer().compose(fabula, parent: nil))
         
         XCTAssertEqual(node.attributes[0].name, "sleep")
-        XCTAssertEqual(try XCTUnwrap(node.attributes[0].value.number), 3)
+        XCTAssertEqual(node.attributes[0].value.number, 3)
         
         let say2 = node.children[0]
-        XCTAssertEqual(say2.attributes.count, 2)
+        XCTAssertEqual(say2.attributes[0].value.number, 4)
         
         let say3 = node.children[1]
-        XCTAssertEqual(say3.attributes.count, 1)
+        XCTAssertEqual(say3.attributes[0].value.number, 3)
     }
     
     
