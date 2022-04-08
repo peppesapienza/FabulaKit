@@ -28,7 +28,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
     private var iterator: FabulaIterator?
     private var currentNode: Node?
     
-    private lazy var currentContext: BotContext = BotContext(bot: self, input: "")
+    private lazy var currentContext: BotContext = BotContext(bot: self)
     
     final public func resume() {
         guard let iterator = iterator else {

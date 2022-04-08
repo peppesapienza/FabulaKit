@@ -1,6 +1,6 @@
 extension AnyFabulaBot {
     internal func run<T>(_ fabula: T) throws where T: Fabula {
-        try run(fabula, with: BotContext(bot: self, input: ""))
+        try run(fabula, with: BotContext(bot: self))
     }
     
     internal func run<T>(_ fabula: T, with context: BotContext) throws where T: Fabula {

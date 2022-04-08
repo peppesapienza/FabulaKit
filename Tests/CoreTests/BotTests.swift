@@ -36,7 +36,7 @@ final class FabulaKitTests: XCTestCase {
         var currentAsk: Ask.Event?
         
         func start(_ conversation: Conversation) throws {
-            var context = BotContext(bot: self, input: "")
+            var context = BotContext(bot: self)
             let iterator = conversation.makeIterator()
             while let next = iterator.next() {
                 try next.content.run(in: &context)

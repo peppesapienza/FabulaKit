@@ -1,12 +1,8 @@
 public struct BotContext {
-    public init(bot: AnyFabulaBot, input: String) {
+    public init(bot: AnyFabulaBot) {
         self.bot = bot
-        self.input = input
     }
         
-    /// The user input
-    public var input: String
-    
     public var bot: AnyFabulaBot
     
     /// Injects the `bot.userInput` inside all matching tags `${some}`
