@@ -12,7 +12,7 @@ public struct Say: Fabula {
 
 extension Say {
     public func run(in context: inout BotContext) throws {
-        context.bot.say(Say.Event(
+        context.bot.schedule(Say.Event(
             text: context.fill(text)
         ))
     }

@@ -64,14 +64,6 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         resume()
     }
     
-    public func say(_ event: Say.Event) {
-        schedule(event)
-    }
-    
-    public func ask(_ event: Ask.Event) {
-        schedule(event)
-    }
-    
     open func start(_ conversation: Conversation) throws {
         iterator = conversation.makeIterator()
         resume()
@@ -85,7 +77,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
     /// It's a FIFO queue where the first event appended is the first to be resumed
     private var queue: [Publisher] = []
     
-    final func schedule(_ event: FabulaEvent) {
+    public final func schedule(_ event: FabulaEvent) {
         print("schedule:", event.type)
         queue.append(map(event))
         

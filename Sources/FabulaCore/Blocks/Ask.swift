@@ -17,7 +17,7 @@ public struct Ask: Fabula {
 extension Ask {
     public func run(in context: inout BotContext) throws {
         context.bot.userInput[key] = ""
-        context.bot.ask(Ask.Event(
+        context.bot.schedule(Ask.Event(
             text: context.fill(text),
             key: key
         ))

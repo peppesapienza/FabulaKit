@@ -8,9 +8,7 @@ public protocol AnyFabulaBot: AnyObject {
 
     func reply(_ text: String)
     
-    func say(_ event: Say.Event)
-    
-    func ask(_ event: Ask.Event)
+    func schedule(_ event: FabulaEvent)
     
     func resume()
 }
