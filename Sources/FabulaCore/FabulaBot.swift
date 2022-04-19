@@ -48,7 +48,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         currentNode = next
         
         do {
-            try next.content.run(in: &currentContext)
+            try next.content?.run(in: &currentContext)
         } catch {
             print(error.localizedDescription)
         }

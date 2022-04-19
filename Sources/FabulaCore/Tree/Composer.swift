@@ -3,7 +3,8 @@ public protocol Composer {
     func compose(_ ask: Ask, parent: Node?) -> Node?
     
     @discardableResult func compose(_ conversation: Conversation, parent: Node?) -> Node?
-    @discardableResult func compose(_ modified: ModifiedFabula, parent: Node?) -> Node?
+    
+    func compose(_ modified: ModifiedFabula, parent: Node?) -> Node?
     
     func compose(_ any: AnyFabula, parent: Node?) -> Node?
     func compose<T>(_ tuple: TupleFabula<T>, parent: Node?) -> Node?
@@ -15,7 +16,9 @@ public protocol Composable {
 
 public class TreeComposer: Composer {
     
-    private var conversations: Set<String> = .init()
+    private var conversations: Set<String> = Set()
+    /// The attributes to be passed to the children nodes of a modified fabula content
+    private var attributes: [AnyAttribute] = []
         
     public func compose(_ conversation: Conversation, parent: Node?) -> Node? {
         /// This should be the best way to prevent duplicated keys
@@ -26,7 +29,7 @@ public class TreeComposer: Composer {
         
         conversations.insert(conversation.key)
         
-        let node = Node(conversation, parent: parent)
+        let node = enrich(Node(parent: parent))
         
         for fabula in conversation.children {
             fabula.accept(self, parent: node)
@@ -38,32 +41,28 @@ public class TreeComposer: Composer {
     }
     
     public func compose(_ say: Say, parent: Node?) -> Node? {
-        let node = Node(say, parent: parent)
+        let node = enrich(Node(say, parent: parent))
         parent?.add(child: node)
         return node
     }
     
     public func compose(_ ask: Ask, parent: Node?) -> Node? {
         /// For the time being we allow registering ask with same key
-        let node = Node(ask, parent: parent)
+        let node = enrich(Node(ask, parent: parent))
         parent?.add(child: node)
         return node
     }
     
     public func compose(_ modified: ModifiedFabula, parent: Node?) -> Node? {
-        let node = Node(modified.content, parent: parent)
+        attributes = modified.attributes
+
+        guard let node = modified.content.accept(self, parent: parent) else {
+            return nil
+        }
+        
         node.add(attributes: modified.attributes)
         
-        if let container = modified.content.value as? Container {
-            for child in container.children {
-                let childNode = child.accept(self, parent: node)
-                
-                if let childNode = childNode {
-                    node.add(child: childNode)
-                }
-            }
-        }
-    
+        attributes = []
         return node
     }
     
@@ -85,5 +84,10 @@ public class TreeComposer: Composer {
         }
         
         return nil
+    }
+    
+    private func enrich(_ node: Node) -> Node {
+        node.add(attributes: attributes)
+        return node
     }
 }
