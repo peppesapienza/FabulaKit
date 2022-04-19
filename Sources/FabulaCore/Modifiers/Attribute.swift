@@ -1,7 +1,16 @@
 internal protocol AnyAttribute {
     var name: String { get }
     var value: AnyValue { get }
-    var shouldReplaceExisting: Bool { get }
+}
+
+extension AnyAttribute {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+    }
+    
+    public static func ==(lhs: Self, rhs: Self) -> Bool {
+        lhs.name == rhs.name
+    }
 }
 
 public enum AnyValue {
@@ -34,11 +43,9 @@ public enum AnyValue {
 public struct Attribute<Context>: AnyAttribute {
     public let name: String
     public let value: AnyValue
-    public let shouldReplaceExisting: Bool
     
-    internal init(name: String, value: AnyValue, shouldReplaceExisting: Bool = true) {
+    internal init(name: String, value: AnyValue) {
         self.name = name
         self.value = value
-        self.shouldReplaceExisting = shouldReplaceExisting
     }
 }

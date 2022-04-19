@@ -19,16 +19,20 @@ extension Fabula {
 }
 
 extension Fabula {
-    internal func attribute(name: String, value: AnyValue, replacing: Bool = true) -> ModifiedFabula {
+    internal func attribute(name: String, value: AnyValue) -> some Fabula {
         attribute(Attribute<Any>(
             name: name,
-            value: value,
-            shouldReplaceExisting: replacing
+            value: value
         ))
    }
 
-    internal func attribute<C>(_ attribute: Attribute<C>) -> ModifiedFabula {
-        ModifiedFabula(self, attributes: [attribute])
+    internal func attribute<C>(_ attribute: Attribute<C>) -> some Fabula {
+        if var modified = self as? ModifiedFabula {
+            modified.attributes.append(attribute)
+            return modified
+        }
+        
+        return ModifiedFabula(self, attributes: [attribute])
     }
 }
 
