@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Ask: Fabula {
+public struct Ask: Fabula, Suspendable {
     public typealias Body = Never
     
     public init(_ text: String, key: String) {
@@ -8,19 +8,17 @@ public struct Ask: Fabula {
         self.key = key
     }
     
-    let text: String
+    public let id: UUID = UUID()
+    public let text: String
     
     /// The key associated to the user input
-    let key: String
+    public let key: String
 }
 
 extension Ask {
-    public func run(in context: inout BotContext) throws {
+    public func run(in context: inout BotContext) async throws {
         context.bot.userInput[key] = ""
-        context.bot.schedule(Ask.Event(
-            text: context.fill(text),
-            key: key
-        ))
+        try await context.bot.run(self)
     }
 }
 
@@ -30,18 +28,3 @@ extension Ask: Composable {
     }
 }
 
-extension Ask {
-    public struct Event: FabulaEvent {
-        public init(text: String, key: String) {
-            assert(!key.isEmpty, "requires a non-empty key")
-            self.key = key
-            self.text = text
-        }
-        
-        public let id: UUID = .init()
-        public let type: String = EventType.ask
-        
-        public let text: String
-        public let key: String
-    }
-}
