@@ -3,7 +3,6 @@ public protocol Composer {
     func compose(_ ask: Ask, parent: Node?) -> Node?
     
     @discardableResult func compose(_ conversation: Conversation, parent: Node?) -> Node?
-    @discardableResult func compose(_ modified: ModifiedFabula, parent: Node?) -> Node?
     
     func compose(_ any: AnyFabula, parent: Node?) -> Node?
     func compose<T>(_ tuple: TupleFabula<T>, parent: Node?) -> Node?
@@ -50,23 +49,6 @@ public class TreeComposer: Composer {
         return node
     }
     
-    public func compose(_ modified: ModifiedFabula, parent: Node?) -> Node? {
-        let node = Node(modified.content, parent: parent)
-        node.add(attributes: modified.attributes)
-        
-        if let container = modified.content.value as? Container {
-            for child in container.children {
-                let childNode = child.accept(self, parent: node)
-                
-                if let childNode = childNode {
-                    node.add(child: childNode)
-                }
-            }
-        }
-    
-        return node
-    }
-    
     public func compose(_ anyFabula: AnyFabula, parent: Node?) -> Node? {
         guard let composable = (anyFabula.value as? Composable) else {
             fatalError("""
@@ -79,11 +61,29 @@ public class TreeComposer: Composer {
     
     /// TupleFabula is treated as flat container
     public func compose<T>(_ tuple: TupleFabula<T>, parent: Node?) -> Node? {
-        
         for fabula in tuple.children {
             fabula.accept(self, parent: parent)
         }
         
         return nil
+    }
+}
+
+extension Composer {
+    func compose<Content, Modifier>(_ modified: ModifiedFabula<Content, Modifier>, parent: Node?) -> Node? {
+        let node = Node(modified, parent: parent)
+        
+        if let fabula = modified.content as? AnyFabula, let container = fabula.value as? Container {
+            for child in container.children {
+                let childNode = child.accept(self, parent: node)
+                
+                if let childNode = childNode {
+                    node.add(child: childNode)
+                }
+            }
+        }
+        
+        parent?.add(child: node)
+        return node
     }
 }
