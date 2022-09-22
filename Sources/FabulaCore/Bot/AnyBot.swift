@@ -4,11 +4,11 @@ public protocol AnyFabulaBot: AnyObject {
     var userInput: [String : Any] { get set }
     
     /// Enqueue and starts a `Conversation` script.
-    func start(_ conversation: Conversation) throws
+    func start(_ conversation: Conversation) async throws
 
-    func reply(_ text: String)
+    func reply(_ text: String) async
+        
+    func run<F>(_ fabula: F) async throws where F: Fabula
     
-    func schedule(_ event: FabulaEvent)
-    
-    func resume()
+    func resume() async
 }
