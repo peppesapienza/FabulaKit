@@ -44,11 +44,11 @@ final class FabulaKitTests: XCTestCase {
         let chat = FabulaBot()
         
         chat.published.compactMap(Say.self).sink { event in
-            received.append(Template(event.text).build(chat.userInput))
+            received.append(Template(event.text).build(chat.userProps.inputs))
         }.store(in: &cancellables)
         
         chat.published.compactMap(Ask.self).sink { event in
-            received.append(Template(event.text).build(chat.userInput))
+            received.append(Template(event.text).build(chat.userProps.inputs))
         }.store(in: &cancellables)
         
         /// check that the state mutate to `.suspended` and then assert

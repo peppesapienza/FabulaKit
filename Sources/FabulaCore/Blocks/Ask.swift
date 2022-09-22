@@ -17,7 +17,7 @@ public struct Ask: Fabula, Suspendable {
 
 extension Ask {
     public func run(in context: inout BotContext) async throws {
-        context.bot.userInput[key] = ""
+        context.bot.userProps.add(input: key, value: "")
         try await context.bot.run(self)
     }
 }

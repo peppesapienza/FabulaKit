@@ -14,12 +14,12 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
     @Published
     public var events: [AnyFabula] = []
     
+    @Published
+    public private(set) var userProps: UserProps = .init()
+    
     private(set) lazy var published: AnyPublisher<AnyFabula, Never> = subject.eraseToAnyPublisher()
     
     private let subject: PassthroughSubject<AnyFabula, Never> = .init()
-
-    public var userInfo: [AnyHashable : Any] = [:]
-    public var userInput: [String : Any] = [:]
     
     private var cancellables: [AnyCancellable] = []
     
@@ -61,7 +61,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
             return
         }
         
-        userInput[ask.key] = text
+        userProps.add(input: ask.key, value: text)
         state = .idle
         await resume()
     }

@@ -4,9 +4,4 @@ public struct BotContext {
     }
     
     public var bot: AnyFabulaBot
-    
-    /// Injects the `bot.userInput` inside all matching tags `${some}`
-    public func fill(_ text: String) -> String {
-        Template(text).build(bot.userInput)
-    }
 }

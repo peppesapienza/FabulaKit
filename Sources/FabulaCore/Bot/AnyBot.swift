@@ -1,8 +1,7 @@
-/// 
 public protocol AnyFabulaBot: AnyObject {
-    var userInfo: [AnyHashable : Any] { get set }
-    var userInput: [String : Any] { get set }
     
+    var userProps: UserProps { get }
+
     /// Enqueue and starts a `Conversation` script.
     func start(_ conversation: Conversation) async throws
 
