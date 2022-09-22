@@ -1,9 +1,10 @@
 import SwiftUI
+import FabulaCore
 
 struct SayView: View {
     
-    init(_ text: String) {
-        self.text = text
+    init(_ say: Say) {
+        self.text = say.text
     }
     
     private let text: String
@@ -18,6 +19,6 @@ struct SayView: View {
 
 struct SayView_Previews: PreviewProvider {
     static var previews: some View {
-        SayView("Test 1")
+        SayView(Say("something"))
     }
 }
