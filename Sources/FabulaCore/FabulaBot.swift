@@ -2,21 +2,22 @@ import Foundation
 import Combine
 
 open class FabulaBot: AnyFabulaBot, ObservableObject {
-    
-    public typealias Publisher = AnyPublisher<FabulaEvent, Never>
-    
+        
     public enum State {
         case idle
-        case suspended(FabulaEvent)
+        case suspended(AnyFabula)
+        case finished
     }
     
     public init() {}
     
     @Published
-    public var events: [FabulaEvent] = []
+    public var events: [AnyFabula] = []
     
-    let nextPub: PassthroughSubject<FabulaEvent, Never> = .init()
+    private(set) lazy var published: AnyPublisher<AnyFabula, Never> = subject.eraseToAnyPublisher()
     
+    private let subject: PassthroughSubject<AnyFabula, Never> = .init()
+
     public var userInfo: [AnyHashable : Any] = [:]
     public var userInput: [String : Any] = [:]
     
@@ -30,7 +31,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
     
     private lazy var currentContext: BotContext = BotContext(bot: self)
     
-    final public func resume() {
+    final public func resume() async {
         guard let iterator = iterator else {
             return
         }
@@ -41,85 +42,64 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         }
         
         guard let next = iterator.next() else {
-            // TODO: The tree has been traversed
+            state = .finished
             return
         }
         
         currentNode = next
         
         do {
-            try next.content.run(in: &currentContext)
+            try await next.content.run(in: &currentContext)
+            await resume()
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    public func reply(_ text: String) {
-        guard case let .suspended(event) = state, let ask = event as? Ask.Event else {
+    public func reply(_ text: String) async {
+        guard case let .suspended(fabula) = state, let ask = fabula.value as? Ask else {
             return
         }
         
         userInput[ask.key] = text
         state = .idle
-        resume()
+        await resume()
     }
     
-    open func start(_ conversation: Conversation) throws {
+    open func start(_ conversation: Conversation) async throws {
+        state = .idle
         iterator = conversation.makeIterator()
-        resume()
+        await resume()
     }
     
-    /// The current active `FabulaEvent` publisher
-    private var currentSub: AnyCancellable?
-    
-    /// The scheduled events queue.
-    ///
-    /// It's a FIFO queue where the first event appended is the first to be resumed
-    private var queue: [Publisher] = []
-    
-    public final func schedule(_ event: FabulaEvent) {
-        print("schedule:", event.type)
-        queue.append(map(event))
-        
-        guard currentSub == nil else {
-            //TODO: The scheduler is still working
-            return
+    public final func run<F>(_ fabula: F) async throws where F: Fabula {
+        if let first = events.last, first.value is Sleep {
+            print("remove sleep")
+            events.removeLast()
+            try await Task.sleep(seconds: 0.5)
         }
         
-        guard !queue.isEmpty else {
-            //TODO: The scheduler doesn't have any more event to publish
-            return
-        }
+        let anyFabula = AnyFabula(fabula)
         
-        currentSub = queue.removeFirst().sink(receiveCompletion: { [self] completion in
-            currentSub = nil
-            resume()
-        }, receiveValue: { [self] event in
-            print("dispatch:", event)
-            
-            // TODO: Add a event.beforeDispatch
-            if let first = events.last, first is TypingEvent {
-                events.removeLast()
-            }
-            
-            events.append(event)
-            nextPub.send(event)
-            
-            // TODO: Add a event.afterDispatch
-            if event is Ask.Event {
-                state = .suspended(event)
-            }
-        })
+        print("run:", anyFabula.value)
+        events.append(anyFabula)
+        
+        subject.send(anyFabula)
+        
+        if let sleep = anyFabula.value as? Sleep {
+            try await Task.sleep(seconds: sleep.seconds)
+        }
+
+        if anyFabula.value is Suspendable {
+            state = .suspended(anyFabula)
+        }
     }
     
-    private func map(_ event: FabulaEvent) -> Publisher {
-        Publishers.Merge(
-            Just<FabulaEvent>(TypingEvent())
-                .delay(for: .seconds(0.7), scheduler: DispatchQueue.main),
-            Just<FabulaEvent>(event)
-                .delay(for: .seconds(2), scheduler: DispatchQueue.main)
-        )
-        .eraseToAnyPublisher()
+}
+
+extension Task where Success == Never, Failure == Never {
+    static func sleep(seconds: Double) async throws {
+        let duration = UInt64(seconds * 1_000_000_000)
+        try await Task.sleep(nanoseconds: duration)
     }
-    
 }
