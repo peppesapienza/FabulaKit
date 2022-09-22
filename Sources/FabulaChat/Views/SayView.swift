@@ -3,6 +3,9 @@ import FabulaCore
 
 struct SayView: View {
     
+    @EnvironmentObject<UserProps>
+    private var userProps
+        
     init(_ say: Say) {
         self.text = say.text
     }
@@ -11,7 +14,7 @@ struct SayView: View {
     
     var body: some View {
         BoxView {
-            Text(text)
+            Text(userProps.enrich(text))
         }
     }
     
@@ -20,5 +23,6 @@ struct SayView: View {
 struct SayView_Previews: PreviewProvider {
     static var previews: some View {
         SayView(Say("something"))
+            .environmentObject(UserProps())
     }
 }

@@ -60,6 +60,7 @@ public struct ChatView: View {
                 LazyVStack(alignment: .leading) {
                     ForEach(bot.events, id: \.id) { event in
                         bot.map(event)
+                            .environmentObject(bot.userProps)
                     }
                 }
             }.padding()
