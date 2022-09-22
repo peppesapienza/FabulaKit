@@ -1,7 +1,10 @@
+import Foundation
+
 public struct Conversation: Fabula, Container, Sequence {
     public typealias Body = Never
     public typealias Event = Never
     
+    public let id: UUID = UUID()
     public let key: String
     public var children: [AnyFabula]
 }
@@ -16,8 +19,8 @@ extension Conversation {
 }
 
 extension Conversation {
-    public func run(in context: inout BotContext) throws {
-        context.bot.resume()
+    public func run(in context: inout BotContext) async throws {
+        await context.bot.resume()
     }
     
     public func makeIterator() -> FabulaIterator {

@@ -1,7 +1,10 @@
-public struct TupleFabula<T>: Fabula, Container {    
+import Foundation
+
+public struct TupleFabula<T>: Fabula, Container {
     public typealias Body = Never
     public typealias Event = Never
     
+    public let id: UUID = UUID()
     public let value: T
     public var children: [AnyFabula]
 }

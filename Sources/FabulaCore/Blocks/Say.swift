@@ -7,29 +7,18 @@ public struct Say: Fabula {
         self.text = text
     }
     
-    let text: String
+    public let id: UUID = UUID()
+    public let text: String
 }
 
 extension Say {
-    public func run(in context: inout BotContext) throws {
-        context.bot.schedule(Say.Event(
-            text: context.fill(text)
-        ))
+    public func run(in context: inout BotContext) async throws {
+        try await context.bot.run(self)
     }
 }
 
 extension Say: Composable {
     public func accept(_ composer: Composer, parent: Node?) -> Node? {
         composer.compose(self, parent: parent)
-    }
-}
-
-
-extension Say {
-    public struct Event: FabulaEvent {
-        public let id: UUID = .init()
-        public let type: String = EventType.say
-        
-        public let text: String
     }
 }
