@@ -1,49 +1,43 @@
 import Foundation
 
-/// A type that represents part of your conversation with a`FabulaBot`.
-///
-public protocol Fabula {
+public protocol Runnable {
+    func run(in context: inout BotContext) async throws
+}
+
+/// A type that represents part of your conversation with a `FabulaBot`.
+public protocol Fabula: Runnable {
     associatedtype Body: Fabula
-    associatedtype Event: FabulaEvent
+    
+    var id: UUID { get }
     
     @FabulaBuilder
     var body: Body { get }
-        
-    func run(in context: inout BotContext) throws
 }
 
 extension Fabula {
-    public func run(in context: inout BotContext) throws {
+    public func run(in context: inout BotContext) async throws {
         /// The base implementation does nothing.
     }
 }
 
 extension Fabula {
-    internal func attribute(name: String, value: AnyValue, replacing: Bool = true) -> ModifiedFabula {
-        attribute(Attribute<Any>(
-            name: name,
-            value: value,
-            shouldReplaceExisting: replacing
-        ))
-   }
-
-    internal func attribute<C>(_ attribute: Attribute<C>) -> ModifiedFabula {
-        ModifiedFabula(self, attributes: [attribute])
+    public func modifier<Modifier>(modifier: Modifier) -> some Fabula {
+        ModifiedFabula(content: self, modifier: modifier)
     }
 }
 
+public protocol Suspendable {}
 
 internal protocol Container {
     var children: [AnyFabula] { get set }
 }
 
 /// An helper extension to avoid accessing body of first level components
-extension Never: Fabula, FabulaEvent {
+extension Never: Fabula {
     public typealias Event = Never
 
     public var body: Never { fatalError("no body in Never") }
     public var id: UUID { UUID() }
-    public var type: String { EventType.never }
 }
 
 extension Fabula where Body == Never {
