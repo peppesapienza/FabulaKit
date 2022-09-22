@@ -14,5 +14,6 @@ public struct Sleep: Fabula {
 extension Sleep: Composable {
     public func accept(_ composer: Composer, parent: Node?) -> Node? {
         assertionFailure("\(Self.self) is not currently supported")
+        return nil
     }
 }
