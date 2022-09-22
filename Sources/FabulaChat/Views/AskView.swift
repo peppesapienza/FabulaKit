@@ -2,15 +2,15 @@ import SwiftUI
 import FabulaCore
 
 protocol AskViewDelegate: AnyObject {
-    func askView(didSubmit input: String, from event: Ask.Event)
+    func askView(didSubmit input: String, from fabula: Ask) async
 }
 
 struct AskView: View {
     
     @Environment(\.theme) var theme
     
-    init(_ event: Ask.Event, delegate: AskViewDelegate? = nil) {
-        self.event = event
+    init(_ fabula: Ask, delegate: AskViewDelegate? = nil) {
+        self.fabula = fabula
         self.delegate = delegate
     }
     
@@ -20,7 +20,7 @@ struct AskView: View {
     @State
     private var didSend: Bool = false
     
-    private let event: Ask.Event
+    private let fabula: Ask
     private let delegate: AskViewDelegate?
     
     private var inputColor: Color {
@@ -30,21 +30,19 @@ struct AskView: View {
     var body: some View {
         VStack(alignment: .leading) {
             BoxView(alignment: .leading) {
-                Text(event.text)
+                Text(fabula.text)
             }
             
             BoxView(alignment: .leading) {
                 inputField()
             }
             .frame(maxWidth: 260)
-            .onAppear {
-                #if DEBUG
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    input = "Melbourne"
-                    delegate?.askView(didSubmit: input, from: event)
-                    didSend.toggle()
-                }
-                #endif
+            .task {
+//                #if DEBUG
+//                input = "Melbourne"
+//                await delegate?.askView(didSubmit: input, from: fabula)
+//                didSend.toggle()
+//                #endif
             }
         }
     }
@@ -59,8 +57,10 @@ struct AskView: View {
                 .padding(7)
             
             Button {
-                delegate?.askView(didSubmit: input, from: event)
-                didSend.toggle()
+                Task {
+                    await delegate?.askView(didSubmit: input, from: fabula)
+                    didSend.toggle()
+                }
             } label: {
                 Image(systemName: didSend ? "checkmark" : "chevron.right")
                     .tint(theme.colors.tint)
@@ -81,7 +81,7 @@ struct AskView: View {
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        AskView(.init(text: "What's your name?", key: "some"))
+        AskView(Ask("What's your name?", key: "some"))
             .previewLayout(.fixed(width: 350, height: 200))
     }
 }

@@ -7,17 +7,16 @@ open class ChatBot: FabulaBot {
     @Published
     var isOpen: Bool = false
     
-    // TODO: A method `event.asView(in context:)` implemented into the current module it might replace this imperative logic
     @ViewBuilder
-    func map(_ event: FabulaEvent) -> some View {
-        switch event {
-        case let event as Say.Event:
-            SayView(event.text)
+    func map(_ fabula: AnyFabula) -> some View {
+        switch fabula.value {
+        case let fabula as Say:
+            SayView(fabula)
             
-        case let event as Ask.Event:
-            AskView(event, delegate: self)
+        case let fabula as Ask:
+            AskView(fabula, delegate: self)
             
-        case _ as TypingEvent:
+        case _ as Sleep:
             TypingView()
             
         default:
@@ -25,15 +24,16 @@ open class ChatBot: FabulaBot {
         }
     }
     
-    override open func start(_ conversation: Conversation) throws {
+    override open func start(_ conversation: Conversation) async throws {
+        events = []
         isOpen = true
-        try super.start(conversation)
+        try await super.start(conversation)
     }
   
 }
 
 extension ChatBot: AskViewDelegate {
-    func askView(didSubmit input: String, from event: Ask.Event) {
-        reply(input)
+    func askView(didSubmit input: String, from fabula: Ask) async {
+        await reply(input)
     }
 }

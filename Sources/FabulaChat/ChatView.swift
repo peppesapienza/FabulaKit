@@ -77,10 +77,15 @@ struct ChatView_Previews: PreviewProvider {
             
             This is a scripted Conversation
             """)
+            .sleep(2)
             Say("It runs automatically and it stops when the user needs to provide an input")
+            .sleep(4)
             Say("Like this...")
+            .sleep(2)
             Ask("Where do you live?", key: "city")
+            .sleep(4)
             Say("Wow!! I love ${city} 🌏")
+            .sleep(2)
         }
         
         let bot = ChatBot()
@@ -90,7 +95,9 @@ struct ChatView_Previews: PreviewProvider {
                 HStack {
                     Spacer()
                     Button("start") {
-                        try? bot.start(conv)
+                        Task {
+                            try? await bot.start(conv)
+                        }
                     }.buttonStyle(.bordered)
                 }
                 Spacer()
