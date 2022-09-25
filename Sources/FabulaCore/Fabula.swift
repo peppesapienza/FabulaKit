@@ -5,7 +5,7 @@ public protocol Runnable {
 }
 
 /// A type that represents part of your conversation with a `FabulaBot`.
-public protocol Fabula: Runnable {
+public protocol Fabula: Runnable, Composable {
     associatedtype Body: Fabula
     
     var id: UUID { get }
@@ -28,15 +28,17 @@ extension Fabula {
 
 public protocol Suspendable {}
 
-internal protocol Container {
-    var children: [AnyFabula] { get set }
+public protocol Container {
+    var children: [any Fabula] { get set }
 }
 
 /// An helper extension to avoid accessing body of first level components
 extension Never: Fabula {
-    public typealias Event = Never
+    public func accept(_ composer: Composer, parent: Node?) -> Node? {
+        fatalError("you can't add \(Never.self) into your fabula tree")
+    }
 
-    public var body: Never { fatalError("no body in Never") }
+    public var body: Never { fatalError("no body in \(Never.self)") }
     public var id: UUID { UUID() }
 }
 

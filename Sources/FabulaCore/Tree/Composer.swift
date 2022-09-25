@@ -2,13 +2,14 @@ public protocol Composer {
     func compose(_ say: Say, parent: Node?) -> Node?
     func compose(_ ask: Ask, parent: Node?) -> Node?
     
-    @discardableResult func compose(_ conversation: Conversation, parent: Node?) -> Node?
+    @discardableResult
+    func compose(_ conversation: Conversation, parent: Node?) -> Node?
     
     func compose(_ any: AnyFabula, parent: Node?) -> Node?
-    func compose<T>(_ tuple: TupleFabula<T>, parent: Node?) -> Node?
 }
 
 public protocol Composable {
+    @discardableResult
     func accept(_ composer: Composer, parent: Node?) -> Node?
 }
 
@@ -58,15 +59,6 @@ public class TreeComposer: Composer {
         
         return composable.accept(self, parent: parent)
     }
-    
-    /// TupleFabula is treated as flat container
-    public func compose<T>(_ tuple: TupleFabula<T>, parent: Node?) -> Node? {
-        for fabula in tuple.children {
-            fabula.accept(self, parent: parent)
-        }
-        
-        return nil
-    }
 }
 
 extension Composer {
@@ -85,5 +77,13 @@ extension Composer {
         
         parent?.add(child: node)
         return node
+    }
+    
+    func compose<T>(_ tuple: TupleFabula<T>, parent: Node?) -> Node? {
+        for fabula in tuple.children {
+            fabula.accept(self, parent: parent)
+        }
+        
+        return nil
     }
 }

@@ -2,18 +2,17 @@ import Foundation
 
 public struct Conversation: Fabula, Container, Sequence {
     public typealias Body = Never
-    public typealias Event = Never
     
     public let id: UUID = UUID()
     public let key: String
-    public var children: [AnyFabula]
+    public var children: [any Fabula]
 }
 
 extension Conversation {
-    public init<C>(key: String, @FabulaBuilder _ content: () -> C) where C: Fabula {
+    public init(key: String, @FabulaBuilder _ content: () -> some Fabula) {
         self.init(
             key: key,
-            children: (content() as? Container)?.children ?? [AnyFabula(content())]
+            children: (content() as? Container)?.children ?? [content()]
         )
     }
 }

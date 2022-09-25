@@ -1,24 +1,25 @@
 @resultBuilder
 public struct FabulaBuilder {
     
-    public static func buildBlock<Content: Fabula>(_ content: Content) -> Content {
+    public static func buildBlock(_ content: some Fabula) -> some Fabula {
         content
     }
     
-    public static func buildIf<T: Fabula>(_ content: T) -> T {
+    public static func buildIf(_ content: some Fabula) -> some Fabula {
         content
     }
     
 }
 
-public extension FabulaBuilder {
-    
-    static func buildPartialBlock<Content>(first content: Content) -> Content where Content: Fabula {
+extension FabulaBuilder {
+    public static func buildPartialBlock<Content>(first content: Content) -> Content where Content: Fabula {
             content
         }
 
-        static func buildPartialBlock<C0, C1>(accumulated: C0, next: C1) -> TupleFabula<(C0, C1)> where C0: Fabula, C1: Fabula {
-            TupleFabula(accumulated, next)
-        }
-    
+    public static func buildPartialBlock(
+        accumulated: some Fabula,
+        next: some Fabula
+    ) -> TupleFabula<(any Fabula, any Fabula)> {
+        TupleFabula(accumulated, next)
+    }
 }
