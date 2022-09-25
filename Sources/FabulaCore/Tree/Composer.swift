@@ -4,8 +4,6 @@ public protocol Composer {
     
     @discardableResult
     func compose(_ conversation: Conversation, parent: Node?) -> Node?
-    
-    func compose(_ any: AnyFabula, parent: Node?) -> Node?
 }
 
 public protocol Composable {
@@ -49,23 +47,14 @@ public class TreeComposer: Composer {
         parent?.add(child: node)
         return node
     }
-    
-    public func compose(_ anyFabula: AnyFabula, parent: Node?) -> Node? {
-        guard let composable = (anyFabula.value as? Composable) else {
-            fatalError("""
-            Your \(anyFabula.fabulaType) must implements \(Composable.self) to be used inside a \(FabulaBuilder.self).
-            """)
-        }
-        
-        return composable.accept(self, parent: parent)
-    }
+
 }
 
 extension Composer {
     func compose<Content, Modifier>(_ modified: ModifiedFabula<Content, Modifier>, parent: Node?) -> Node? {
         let node = Node(modified, parent: parent)
         
-        if let fabula = modified.content as? AnyFabula, let container = fabula.value as? Container {
+        if let container = modified.content as? Container {
             for child in container.children {
                 let childNode = child.accept(self, parent: node)
                 

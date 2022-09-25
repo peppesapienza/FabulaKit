@@ -8,8 +8,8 @@ open class ChatBot: FabulaBot {
     var isOpen: Bool = false
     
     @ViewBuilder
-    func map(_ fabula: AnyFabula) -> some View {
-        switch fabula.value {
+    func map(_ fabula: any Fabula) -> some View {
+        switch fabula {
         case let fabula as Say:
             SayView(fabula)
             

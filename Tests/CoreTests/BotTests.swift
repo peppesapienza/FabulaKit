@@ -6,18 +6,11 @@ extension BotError {
     static let failed: BotError = .init(key: "test_failed", message: "FAIL")
 }
 
-extension AnyFabula {
-    func to<E>(_ type: E.Type) throws -> E where E: Fabula {
-        try XCTUnwrap(value as? E)
-    }
-}
-
-
-extension Publisher where Output == AnyFabula {
+extension Publisher where Output == any Fabula {
     /// Try casting the Output event to the provided type and republish it if the casting succeeds
     func compactMap<T>(_ type: T.Type) -> Publishers.CompactMap<Self, T> where T: Fabula {
         compactMap { event in
-            event.value as? T
+            event as? T
         }
     }
 }
@@ -53,7 +46,7 @@ final class FabulaKitTests: XCTestCase {
                 
         /// check that the state mutate to `.suspended` and then assert
         chat.$state.sink { state in
-            if case let .suspended(event) = state, let _ = event.value as? Ask {
+            if case let .suspended(event) = state, let _ = event as? Ask {
                 XCTAssertEqual(
                     ["hello", "my name is FabulaBot", "what's your name?"],
                     received

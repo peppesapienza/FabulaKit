@@ -7,7 +7,7 @@ public protocol AnyFabulaBot: AnyObject {
 
     func reply(_ text: String) async
         
-    func run<F>(_ fabula: F) async throws where F: Fabula
+    func run(_ fabula: some Fabula) async throws
     
     func resume() async
 }

@@ -3,13 +3,12 @@ import XCTest
 
 extension Node {
     func to<F>(_ type: F.Type) throws -> F where F: Fabula {
-        try XCTUnwrap(content.value as? F)
+        try XCTUnwrap(content as? F)
     }
 }
 
 final class TreeTests: XCTestCase {
 
-    
     func test_coversationIsComposedAsExpected() throws {
         
         // TODO: find out a better way to test the tree without casting the node

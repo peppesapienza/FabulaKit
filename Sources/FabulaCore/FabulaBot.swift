@@ -5,21 +5,21 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         
     public enum State {
         case idle
-        case suspended(AnyFabula)
+        case suspended(any Fabula)
         case finished
     }
     
     public init() {}
     
     @Published
-    public var events: [AnyFabula] = []
+    public var events: [any Fabula] = []
     
     @Published
     public private(set) var userProps: UserProps = .init()
     
-    private(set) lazy var published: AnyPublisher<AnyFabula, Never> = subject.eraseToAnyPublisher()
+    private(set) lazy var published: AnyPublisher<any Fabula, Never> = subject.eraseToAnyPublisher()
     
-    private let subject: PassthroughSubject<AnyFabula, Never> = .init()
+    private let subject: PassthroughSubject<any Fabula, Never> = .init()
     
     private var cancellables: [AnyCancellable] = []
     
@@ -57,7 +57,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
     }
     
     public func reply(_ text: String) async {
-        guard case let .suspended(fabula) = state, let ask = fabula.value as? Ask else {
+        guard case let .suspended(fabula) = state, let ask = fabula as? Ask else {
             return
         }
         
@@ -72,26 +72,24 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         await resume()
     }
     
-    public final func run<F>(_ fabula: F) async throws where F: Fabula {
-        if let first = events.last, first.value is Sleep {
+    public final func run(_ fabula: some Fabula) async throws {
+        if let first = events.last, first is Sleep {
             print("remove sleep")
             events.removeLast()
             try await Task.sleep(seconds: 0.5)
         }
+                
+        print("run:", fabula)
         
-        let anyFabula = AnyFabula(fabula)
+        events.append(fabula)
+        subject.send(fabula)
         
-        print("run:", anyFabula.value)
-        events.append(anyFabula)
-        
-        subject.send(anyFabula)
-        
-        if let sleep = anyFabula.value as? Sleep {
+        if let sleep = fabula as? Sleep {
             try await Task.sleep(seconds: sleep.seconds)
         }
 
-        if anyFabula.value is Suspendable {
-            state = .suspended(anyFabula)
+        if fabula is Suspendable {
+            state = .suspended(fabula)
         }
     }
     

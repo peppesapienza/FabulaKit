@@ -1,7 +1,7 @@
 public class Node {
     
-    init<F>(_ content: F, parent: Node? = nil) where F: Fabula {
-        self.content = content as? AnyFabula ?? AnyFabula(content)
+    init(_ content: some Fabula, parent: Node? = nil) {
+        self.content = content
         self.parent = parent
     }
     
@@ -11,11 +11,7 @@ public class Node {
     private(set) weak var parent: Node?
     private(set) var children: [Node] = []
     
-    let content: AnyFabula
-    
-    var contentType: Any.Type {
-        content.fabulaType
-    }
+    let content: any Fabula
     
     func add(child: Node) {
         children.append(child)
