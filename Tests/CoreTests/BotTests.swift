@@ -50,7 +50,7 @@ final class FabulaKitTests: XCTestCase {
         chat.published.compactMap(Ask.self).sink { event in
             received.append(Template(event.text).build(chat.userProps.inputs))
         }.store(in: &cancellables)
-        
+                
         /// check that the state mutate to `.suspended` and then assert
         chat.$state.sink { state in
             if case let .suspended(event) = state, let _ = event.value as? Ask {
@@ -59,7 +59,7 @@ final class FabulaKitTests: XCTestCase {
                     received
                 )
                 
-                Task {
+                Task(priority: .userInitiated) {
                     await chat.reply("giuseppe")
                 }
                 
@@ -70,30 +70,13 @@ final class FabulaKitTests: XCTestCase {
                 XCTAssertEqual(received[3], "my name is: giuseppe")
                 expChatToResume.fulfill()
             }
+            
         }.store(in: &cancellables)
         
         try await chat.start(conversation)
 
         wait(for: [expStateToSuspend, expChatToResume], timeout: 10)
     }
-    
-    
-    func test_sleepModifier() async throws {
-        let expStateToSuspend = expectation(description: "The bot should stop running after running an Ask.Event")
-        let expChatToResume = expectation(description: "The bot should resume when the input has been provided")
-        
-        let conversation = Conversation(key: "some") {
-            Say("sleep 2")
-                .sleep(2)
-        }
-
-        let chat = FabulaBot()
-        try await chat.start(conversation)
-        
-        wait(for: [expStateToSuspend, expChatToResume], timeout: 5)
-    }
-    
-    
     
    
 }
