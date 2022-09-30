@@ -6,6 +6,7 @@ import Combine
 
 final class ChatTests: XCTestCase {
     
+    #if canImport(UIKit)
     func testColorFromHex() throws {
         
         let grayLight = "#d3dce6"
@@ -25,6 +26,6 @@ final class ChatTests: XCTestCase {
         XCTAssertEqual(dynamicGrayColor.hex(), grayLight.uppercased())
         
     }
-
+    #endif
 
 }

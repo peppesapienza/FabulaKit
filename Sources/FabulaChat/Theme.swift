@@ -20,7 +20,8 @@ extension EnvironmentValues {
 }
 
 extension Theme: EnvironmentKey {
-    public static let defaultValue: Theme = .init(
+    #if canImport(UIKit)
+    public static let defaultValue: Theme = Theme(
         colors: ThemeColor(
             background: Color(light: "#f8f9fa", dark: "#14213D"),
             foreground: .black,
@@ -28,4 +29,14 @@ extension Theme: EnvironmentKey {
             box: Color(light: "#e9ecef", dark: "#4A4E69")
         )
     )
+    #else
+    public static let defaultValue: Theme = Theme(
+        colors: ThemeColor(
+            background: .white,
+            foreground: .black,
+            tint: .orange,
+            box: .gray
+        )
+    )
+    #endif
 }

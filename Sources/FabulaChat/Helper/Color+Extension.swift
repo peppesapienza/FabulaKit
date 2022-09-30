@@ -1,7 +1,7 @@
 import SwiftUI
-import UIKit
 import Foundation
 
+#if canImport(UIKit)
 extension Color {
    
     /// Initialise a color from an hex string. E.g. `#1fb6ff` or `#7e5bef` are valid hex colors.
@@ -64,3 +64,4 @@ extension Color {
     }
 
 }
+#endif
