@@ -24,7 +24,7 @@ public class TreeComposer: Composer {
         
         conversations.insert(conversation.key)
         
-        let node = Node(conversation, parent: parent)
+        let node = Node(EmptyFabula(), parent: parent)
         
         for fabula in conversation.children {
             fabula.accept(self, parent: node)
