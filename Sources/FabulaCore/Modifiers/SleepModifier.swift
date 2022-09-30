@@ -5,6 +5,7 @@ struct SleepModifier: FabulaModifier {
     
     func run(in context: inout BotContext) async throws {
         try await context.bot.run(Sleep(seconds))
+        try await Task.sleep(seconds: seconds)
     }
 }
 
