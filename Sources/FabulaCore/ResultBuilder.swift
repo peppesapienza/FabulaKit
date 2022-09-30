@@ -19,7 +19,8 @@ extension FabulaBuilder {
     public static func buildPartialBlock(
         accumulated: some Fabula,
         next: some Fabula
-    ) -> TupleFabula<(any Fabula, any Fabula)> {
-        TupleFabula(accumulated, next)
+    ) -> some Fabula {
+        TupleFabula<any Fabula>(accumulated, next)
     }
+    
 }
