@@ -10,4 +10,5 @@ public protocol AnyFabulaBot: AnyObject {
     func run(_ fabula: some Fabula) async throws
     
     func resume() async
+    func suspend(at fabula: some Suspendable) async throws
 }

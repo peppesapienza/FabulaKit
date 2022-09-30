@@ -18,6 +18,11 @@ extension Fabula {
     public func run(in context: inout BotContext) async throws {
         /// The base implementation does nothing.
     }
+    
+    @discardableResult
+    public func accept(_ composer: Composer, parent: Node?) -> Node? {
+        nil
+    }
 }
 
 extension Fabula {
@@ -26,7 +31,9 @@ extension Fabula {
     }
 }
 
-public protocol Suspendable {}
+public protocol Suspendable: Fabula {
+    var key: String { get }
+}
 
 public protocol Container {
     var children: [any Fabula] { get set }

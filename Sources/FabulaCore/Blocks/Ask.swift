@@ -19,6 +19,7 @@ extension Ask {
     public func run(in context: inout BotContext) async throws {
         context.bot.userProps.add(input: key, value: "")
         try await context.bot.run(self)
+        try await context.bot.suspend(at: self)
     }
 }
 

@@ -5,7 +5,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         
     public enum State {
         case idle
-        case suspended(any Fabula)
+        case suspended(any Suspendable)
         case finished
     }
     
@@ -57,11 +57,12 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
     }
     
     public func reply(_ text: String) async {
-        guard case let .suspended(fabula) = state, let ask = fabula as? Ask else {
+        guard case let .suspended(fabula) = state else {
             return
         }
         
-        userProps.add(input: ask.key, value: text)
+        print("reply:", text)
+        userProps.add(input: fabula.key, value: text)
         state = .idle
         await resume()
     }
@@ -83,16 +84,16 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         
         events.append(fabula)
         subject.send(fabula)
-        
-        if let sleep = fabula as? Sleep {
-            try await Task.sleep(seconds: sleep.seconds)
-        }
-
-        if fabula is Suspendable {
-            state = .suspended(fabula)
-        }
     }
     
+    public final func suspend(at fabula: some Suspendable) async throws {
+        if case let .suspended(fabula) = state {
+            throw BotError.alreadySuspended(at: fabula)
+        }
+        
+        print("suspended at:", fabula)
+        state = .suspended(fabula)
+    }
 }
 
 extension Task where Success == Never, Failure == Never {
