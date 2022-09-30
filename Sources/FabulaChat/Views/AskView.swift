@@ -9,6 +9,9 @@ struct AskView: View {
     
     @Environment(\.theme) var theme
     
+    @EnvironmentObject<UserProps>
+    private var userProps
+    
     init(_ fabula: Ask, delegate: AskViewDelegate? = nil) {
         self.fabula = fabula
         self.delegate = delegate
@@ -25,6 +28,14 @@ struct AskView: View {
     
     private var inputColor: Color {
         theme.colors.tint.opacity(0.4)
+    }
+    
+    private var userInput: String {
+        userProps.inputs[fabula.key] as? String ?? ""
+    }
+    
+    private var disabled: Bool {
+        didSend || !userInput.isEmpty
     }
     
     var body: some View {
@@ -51,9 +62,9 @@ struct AskView: View {
     @ViewBuilder
     private func inputField() -> some View {
         HStack(spacing: 0) {
-            TextField("", text: $input)
+            TextField(userInput, text: $input)
                 .textFieldStyle(.plain)
-                .disabled(didSend)
+                .disabled(disabled)
                 .padding(7)
             
             Button {
@@ -62,14 +73,14 @@ struct AskView: View {
                     didSend.toggle()
                 }
             } label: {
-                Image(systemName: didSend ? "checkmark" : "chevron.right")
+                Image(systemName: disabled ? "checkmark" : "chevron.right")
                     .tint(theme.colors.tint)
                     .font(.headline)
                     .padding([.top, .bottom], 10)
                     .padding([.leading, .trailing], 12)
                     .clipped()
             }
-            .disabled(didSend)
+            .disabled(disabled)
             .background(inputColor)
         }
         .overlay(
@@ -83,5 +94,6 @@ struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
         AskView(Ask("What's your name?", key: "some"))
             .previewLayout(.fixed(width: 350, height: 200))
+            .environmentObject(UserProps())
     }
 }
