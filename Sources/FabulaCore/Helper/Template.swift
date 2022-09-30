@@ -36,14 +36,6 @@ struct Template {
     }
 }
 
-extension BotError {
-    static func templateKeyIsMissing(key: String, template: String) -> BotError {
-        .init(key: "fabula_error_template_key_missing", message: """
-         > FabulaBot can't fill the template key: ${\(key)}, in template: "\(template)"
-        """)
-    }
-}
-
 extension String {
     /// Replace a regex match in place and returns the resulted string.
     ///
