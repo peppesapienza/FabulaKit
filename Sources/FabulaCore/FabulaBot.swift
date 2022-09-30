@@ -12,7 +12,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
     public init() {}
     
     @Published
-    public var events: [any Fabula] = []
+    public var events: [any Presentable] = []
     
     @Published
     public private(set) var userProps: UserProps = .init()
@@ -73,7 +73,7 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         await resume()
     }
     
-    public final func run(_ fabula: some Fabula) async throws {
+    public final func present(_ fabula: some Presentable) async throws {
         if let first = events.last, first is Sleep {
             print("remove sleep")
             events.removeLast()

@@ -1,19 +1,19 @@
 import Foundation
 
-public struct Say: Fabula {
+public struct Say: Fabula, Presentable {
     public typealias Body = Never
     
     public init(_ text: String) {
         self.text = text
     }
     
-    public let id: UUID = UUID()
+    public let id: String = UUID().uuidString
     public let text: String
 }
 
 extension Say {
     public func run(in context: inout BotContext) async throws {
-        try await context.bot.run(self)
+        try await context.bot.present(self)
     }
 }
 

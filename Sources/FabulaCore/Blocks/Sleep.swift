@@ -1,13 +1,13 @@
 import Foundation
 
-public struct Sleep: Fabula {
+public struct Sleep: Fabula, Presentable {
     public typealias Body = Never
     
     public init(_ seconds: TimeInterval) {
         self.seconds = seconds
     }
     
-    public let id: UUID = UUID()
+    public let id: String = UUID().uuidString
     public let seconds: TimeInterval
 }
 

@@ -58,8 +58,8 @@ public struct ChatView: View {
             
             ScrollView {
                 LazyVStack(alignment: .leading) {
-                    ForEach(bot.events, id: \.id) { event in
-                        bot.map(event)
+                    ForEach(bot.events, id: \.id) { fabula in
+                        bot.map(fabula)
                             .environmentObject(bot.userProps)
                     }
                 }

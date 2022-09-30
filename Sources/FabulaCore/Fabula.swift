@@ -8,8 +8,6 @@ public protocol Runnable {
 public protocol Fabula: Runnable, Composable {
     associatedtype Body: Fabula
     
-    var id: UUID { get }
-    
     @FabulaBuilder
     var body: Body { get }
 }
@@ -35,8 +33,12 @@ public protocol Suspendable: Fabula {
     var key: String { get }
 }
 
+public protocol Presentable: Fabula {
+    var id: String { get }
+}
+
 public protocol Container {
-    var children: [any Fabula] { get set }
+    var children: [any Fabula] { get }
 }
 
 /// An helper extension to avoid accessing body of first level components

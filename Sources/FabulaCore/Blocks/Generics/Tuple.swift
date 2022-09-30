@@ -1,10 +1,9 @@
 import Foundation
 
 struct TupleFabula<T>: Fabula, Container {
-    public typealias Body = Never
+    typealias Body = Never
     
-    public let id: UUID = UUID()
-    public var children: [any Fabula]
+    let children: [any Fabula]
 }
 
 extension TupleFabula: Composable {

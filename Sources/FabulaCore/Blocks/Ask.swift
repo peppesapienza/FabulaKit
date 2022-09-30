@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Ask: Fabula, Suspendable {
+public struct Ask: Fabula, Suspendable, Presentable {
     public typealias Body = Never
     
     public init(_ text: String, key: String) {
@@ -8,7 +8,7 @@ public struct Ask: Fabula, Suspendable {
         self.key = key
     }
     
-    public let id: UUID = UUID()
+    public var id: String { key }
     public let text: String
     
     /// The key associated to the user input
@@ -18,7 +18,7 @@ public struct Ask: Fabula, Suspendable {
 extension Ask {
     public func run(in context: inout BotContext) async throws {
         context.bot.userProps.add(input: key, value: "")
-        try await context.bot.run(self)
+        try await context.bot.present(self)
         try await context.bot.suspend(at: self)
     }
 }

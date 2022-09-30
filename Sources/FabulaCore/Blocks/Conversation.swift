@@ -3,7 +3,6 @@ import Foundation
 public struct Conversation: Fabula, Container, Sequence {
     public typealias Body = Never
     
-    public let id: UUID = UUID()
     public let key: String
     public var children: [any Fabula]
 }

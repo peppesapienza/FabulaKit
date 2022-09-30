@@ -5,8 +5,6 @@ public protocol FabulaModifier: Runnable {}
 struct ModifiedFabula<Content, Modifier>: Fabula {
     typealias Body = Never
     
-    let id: UUID = UUID()
-    
     let content: Content
     let modifier: Modifier
 
