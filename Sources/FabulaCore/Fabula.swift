@@ -31,6 +31,9 @@ extension Fabula {
 
 public protocol Suspendable: Fabula {
     var key: String { get }
+    
+    /// The user has sent an input
+    func submit<T>(_ input: T) async throws 
 }
 
 public protocol Presentable: Fabula {
