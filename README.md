@@ -1,4 +1,4 @@
-# FabulaKit
+# [WIP] FabulaKit
 
 FabulaKit is a DSL for writing scripted conversation with a Bot. It can be used to build FAQ, provide app updates or guide the user into your product.
 
