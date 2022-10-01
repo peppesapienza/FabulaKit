@@ -60,11 +60,16 @@ open class FabulaBot: AnyFabulaBot, ObservableObject {
         guard case let .suspended(fabula) = state else {
             return
         }
-        
+
         print("reply:", text)
-        userProps.add(input: fabula.key, value: text)
-        state = .idle
-        await resume()
+        do {
+            try await fabula.submit(text)
+            userProps.add(input: fabula.key, value: text)
+            state = .idle
+            await resume()
+        } catch {
+            print(error)
+        }
     }
     
     open func start(_ conversation: Conversation) async throws {
