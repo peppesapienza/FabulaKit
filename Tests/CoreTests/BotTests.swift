@@ -31,6 +31,9 @@ final class FabulaKitTests: XCTestCase {
             Say("hello")
             Say("my name is FabulaBot")
             Ask("what's your name?", key: "username")
+                .onSubmit { text in
+                    print("onSubmit:", text)
+                }
             Say("my name is: ${username}")
         })
         
