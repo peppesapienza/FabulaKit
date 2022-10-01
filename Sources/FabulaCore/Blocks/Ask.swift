@@ -3,16 +3,38 @@ import Foundation
 public struct Ask: Fabula, Suspendable, Presentable {
     public typealias Body = Never
     
-    public init(_ text: String, key: String) {
-        self.text = text
-        self.key = key
-    }
-    
     public var id: String { key }
     public let text: String
     
     /// The key associated to the user input
     public let key: String
+    
+    public let onSubmit: (String) async throws -> ()
+}
+
+extension Ask {
+    public init(_ text: String, key: String) {
+        self.text = text
+        self.key = key
+        self.onSubmit = { _ in }
+    }
+    
+    public init(_ text: String, key: String, onSubmit: @escaping (String) async throws -> ()) {
+        self.text = text
+        self.key = key
+        self.onSubmit = onSubmit
+    }
+}
+
+extension Ask {
+    public func onSubmit(_ action: @escaping (String) async throws -> ()) -> Ask {
+        Ask(text, key: key, onSubmit: action)
+    }
+    
+    public func submit<T>(_ input: T) async throws {
+        guard let s = input as? String else { return }
+        try await onSubmit(s)
+    }
 }
 
 extension Ask {
@@ -28,4 +50,3 @@ extension Ask: Composable {
         composer.compose(self, parent: parent)
     }
 }
-
