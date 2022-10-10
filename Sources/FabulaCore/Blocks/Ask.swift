@@ -9,6 +9,9 @@ public struct Ask: Fabula, Suspendable, Presentable {
     /// The key associated to the user input
     public let key: String
     
+    @FabulaState
+    public var input: String = ""
+    
     public let onSubmit: (String) async throws -> ()
 }
 
@@ -33,6 +36,7 @@ extension Ask {
     
     public func submit<T>(_ input: T) async throws {
         guard let s = input as? String else { return }
+        self.input = s
         try await onSubmit(s)
     }
 }

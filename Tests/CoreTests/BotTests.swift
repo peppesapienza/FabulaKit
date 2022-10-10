@@ -75,4 +75,13 @@ final class FabulaKitTests: XCTestCase {
     }
     
    
+    func test_askMutates_whenInputSent() async throws {
+        let ask = Ask("ask", key: "ask")
+        
+        try await ask.submit("A")
+        XCTAssertEqual(ask.input, "A")
+        XCTAssertEqual(ask.$input.wrappedValue, "A")
+        ask.$input.wrappedValue = "B"
+        XCTAssertEqual(ask.input, "B")
+    }
 }
